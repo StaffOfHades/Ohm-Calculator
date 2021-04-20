@@ -11,14 +11,20 @@ interface ColorCode {
   tolerance: number | null;
 }
 
+interface ResistorBands {
+  exponentBand: string;
+  firstBand: string;
+  secondBand: string;
+  thirdBand?: string;
+  toleranceBand?: string;
+}
+
 const ColorCodes: Record<string, ColorCode> = colorCodes;
 
 const ValidNumberColors = Object.keys(ColorCodes).filter((key) => ColorCodes[key].number !== null);
 const ValidToleranceColors: Array<string | null> = Object.keys(ColorCodes).filter(
   (key) => ColorCodes[key].tolerance !== null
 );
-// Add empty (null) tolerance band to valid colors
-ValidToleranceColors.push(null);
 
 /* GET home page. */
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
@@ -30,8 +36,9 @@ router.post(
   '/calculate-value',
   body('firstBand').isIn(ValidNumberColors),
   body('secondBand').isIn(ValidNumberColors),
+  body('thirdBand').optional().isIn(ValidNumberColors),
   body('exponentBand').isIn(Object.keys(ColorCodes)),
-  body('toleranceBand').exists().isIn(ValidToleranceColors),
+  body('toleranceBand').optional().exists().isIn(ValidToleranceColors),
   (req: Request, res: Response, next: NextFunction) => {
     // Finds the validation errors in this request
     // and wraps them in an object.
@@ -48,17 +55,28 @@ router.post(
         .json({ invalidFields });
     }
     // If no errors occur, we can safely retrieve & manipulate the bands
-    const { exponentBand, firstBand, secondBand, toleranceBand } = req.body;
+    const {
+      exponentBand,
+      firstBand,
+      secondBand,
+      thirdBand,
+      toleranceBand,
+    }: ResistorBands = req.body;
 
     // Get the values associated to the colors of the passed bands
     const { exponent } = ColorCodes[exponentBand];
     const firstSignificantDigit = ColorCodes[firstBand].number ?? 1;
     const secondSignificantDigit = ColorCodes[secondBand].number ?? 0;
-    const tolerance = toleranceBand === null ? 20 : ColorCodes[toleranceBand].tolerance ?? 20;
+    const { number: thirdSignificantDigit }: { number?: number | null } =
+      thirdBand === undefined ? {} : ColorCodes[thirdBand];
+    const tolerance = toleranceBand === undefined ? 20 : ColorCodes[toleranceBand].tolerance ?? 20;
 
     // Calculate the resistance according to digits & exponent bands
-    const resistance =
-      (firstSignificantDigit * 10 + secondSignificantDigit) * Math.pow(10, exponent);
+    let resistance = (firstSignificantDigit * 10 + secondSignificantDigit) * Math.pow(10, exponent);
+    // Add third significant digit if defined
+    if (thirdSignificantDigit !== undefined && thirdSignificantDigit !== null) {
+      resistance = resistance * 10 + thirdSignificantDigit * Math.pow(10, exponent);
+    }
 
     // Return label that corresponds to the bands.
     res
@@ -73,8 +91,9 @@ router.post(
   '/calculate-values',
   body('firstBand').isIn(ValidNumberColors),
   body('secondBand').isIn(ValidNumberColors),
+  body('thirdBand').optional().isIn(ValidNumberColors),
   body('exponentBand').isIn(Object.keys(ColorCodes)),
-  body('toleranceBand').exists().isIn(ValidToleranceColors),
+  body('toleranceBand').optional().isIn(ValidToleranceColors),
   (req: Request, res: Response, next: NextFunction) => {
     // Finds the validation errors in this request
     // and wraps them in an object.
@@ -91,17 +110,29 @@ router.post(
         .json({ invalidFields });
     }
     // If no errors occur, we can safely retrieve & manipulate the bands
-    const { exponentBand, firstBand, secondBand, toleranceBand } = req.body;
+    const {
+      exponentBand,
+      firstBand,
+      secondBand,
+      thirdBand,
+      toleranceBand,
+    }: ResistorBands = req.body;
 
     // Get the values associated to the colors of the passed bands
     const { exponent } = ColorCodes[exponentBand];
     const firstSignificantDigit = ColorCodes[firstBand].number ?? 1;
     const secondSignificantDigit = ColorCodes[secondBand].number ?? 0;
-    const tolerance = toleranceBand === null ? 20 : ColorCodes[toleranceBand].tolerance ?? 20;
+    const { number: thirdSignificantDigit }: { number?: number | null } =
+      thirdBand === undefined ? {} : ColorCodes[thirdBand];
+    const tolerance = toleranceBand === undefined ? 20 : ColorCodes[toleranceBand].tolerance ?? 20;
 
     // Calculate the resistance according to digits & exponent bands
-    const baseResistance =
+    let baseResistance =
       (firstSignificantDigit * 10 + secondSignificantDigit) * Math.pow(10, exponent);
+    // Add third significant digit if defined
+    if (thirdSignificantDigit !== undefined && thirdSignificantDigit !== null) {
+      baseResistance = baseResistance * 10 + thirdSignificantDigit * Math.pow(10, exponent);
+    }
 
     // Calculate the values associatesd to the bands & return them
     const values = {
