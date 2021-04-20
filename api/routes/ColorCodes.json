@@ -1,0 +1,67 @@
+{
+  "pink": {
+    "number": null,
+    "exponent": -3,
+    "tolerance": null
+  },
+  "silver": {
+    "number": null,
+    "exponent": -2,
+    "tolerance": 10
+  },
+  "gold": {
+    "number": null,
+    "exponent": -1,
+    "tolerance": 5
+  },
+  "black": {
+    "number": 0,
+    "exponent": 0,
+    "tolerance": null
+  },
+  "brown": {
+    "number": 1,
+    "exponent": 1,
+    "tolerance": 1
+  },
+  "red": {
+    "number": 2,
+    "exponent": 2,
+    "tolerance": 2
+  },
+  "orange": {
+    "number": 3,
+    "exponent": 3,
+    "tolerance": 0.05
+  },
+  "yellow": {
+    "number": 4,
+    "exponent": 4,
+    "tolerance": 0.02
+  },
+  "green": {
+    "number": 5,
+    "exponent": 5,
+    "tolerance": 0.5
+  },
+  "blue": {
+    "number": 6,
+    "exponent": 6,
+    "tolerance": 0.25
+  },
+  "violet": {
+    "number": 7,
+    "exponent": 7,
+    "tolerance": 0.1
+  },
+  "grey": {
+    "number": 8,
+    "exponent": 8,
+    "tolerance": 0.01
+  },
+  "white": {
+    "number": 9,
+    "exponent": 9,
+    "tolerance": null
+  }
+}
