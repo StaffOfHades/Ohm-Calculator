@@ -6,7 +6,7 @@ import app from './app';
 import debugConstructor from 'debug';
 import http from 'http';
 
-var debug = debugConstructor('api:server')
+var debug = debugConstructor('api:server');
 
 /**
  * Get port from environment and store in Express.
@@ -53,14 +53,12 @@ function normalizePort(val: number | string) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error: Error & { code: string; syscall: string; }) {
+function onError(error: Error & { code: string; syscall: string }) {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -83,8 +81,6 @@ function onError(error: Error & { code: string; syscall: string; }) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr?.port;
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port;
   debug('Listening on ' + bind);
 }
