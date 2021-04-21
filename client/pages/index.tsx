@@ -254,6 +254,22 @@ export default function Home({ request = defaultRequest }: HomeProps) {
             </button>
           </header>
           <div className="card-content">
+            <div className="tabs">
+              <ul>
+                <li
+                  className={useThirdBand ? undefined : 'is-active'}
+                  onClick={() => setUseThirdBand(false)}
+                >
+                  <a>Standard 4-Bands</a>
+                </li>
+                <li
+                  className={useThirdBand ? 'is-active' : undefined}
+                  onClick={() => setUseThirdBand(true)}
+                >
+                  <a>Extended 5-Bands</a>
+                </li>
+              </ul>
+            </div>
             <div className="content">
               <div className="columns is-multiline">
                 {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
