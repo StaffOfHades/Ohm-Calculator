@@ -1,8 +1,14 @@
-import { getByLabelText, getByTestId, getByText, queryByText } from '@testing-library/dom';
+import {
+  getByDisplayValue,
+  getByLabelText,
+  getByTestId,
+  getByText,
+  queryByText,
+} from '@testing-library/dom';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Home, { RequestOptions } from '../../pages/index.tsx';
+import Home, { RequestOptions, ResistorValues } from '../../pages/index.tsx';
 
 test('loads initial page', async () => {
   const { container } = render(<Home />);
@@ -85,5 +91,69 @@ test('help message is shown if an invalid field colors is returned', async () =>
   userEvent.click(getByTestId(container, 'calculate-buton'));
 
   await waitFor(() => expect(queryByText(container, 'This color is not valid for this band')));
+  expect(getByText(container, 'This color is not valid for this band')).toBeInTheDocument();
+});
+
+test('values return by server calculation are shown', async () => {
+  const values: ResistorValues = {
+    baseResistance: 20,
+    tolerance: 10,
+    maxResistance: 22,
+    mixResistance: 18,
+  };
+  function request(options: RequestOptions<Record<string, string>>): ResistorValues {
+    return values;
+  }
+
+  const { container } = render(<Home request={request} />);
+
+  const firstSelect = getByLabelText(container, '1st Digit');
+  userEvent.selectOptions(firstSelect, [getByText(firstSelect, 'black')]);
+
+  const secondSelect = getByLabelText(container, '2nd Digit');
+  userEvent.selectOptions(secondSelect, [getByText(secondSelect, 'black')]);
+
+  const exponentSelect = getByLabelText(container, "10's Exponent");
+  userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
+
+  userEvent.click(getByTestId(container, 'calculate-buton'));
+
+  await waitFor(() => expect(queryByText(container, 'Values')));
+
+  expect(getByText(container, 'Values')).toBeInTheDocument();
+  expect(getByDisplayValue(container, values.baseResistance)).toBeInTheDocument();
+  expect(getByDisplayValue(container, values.tolerance)).toBeInTheDocument();
+  expect(getByDisplayValue(container, values.maxResistance)).toBeInTheDocument();
+  expect(getByDisplayValue(container, values.mixResistance)).toBeInTheDocument();
+});
+
+test('reset button resets form state to default values', async () => {
+  function request(options: RequestOptions<Record<string, string>>): Promise<Array<string>> {
+    return ['exponentBand'];
+  }
+
+  const { container } = render(<Home request={request} />);
+
+  const firstSelect = getByLabelText(container, '1st Digit');
+  userEvent.selectOptions(firstSelect, [getByText(firstSelect, 'black')]);
+
+  const secondSelect = getByLabelText(container, '2nd Digit');
+  userEvent.selectOptions(secondSelect, [getByText(secondSelect, 'black')]);
+
+  const exponentSelect = getByLabelText(container, "10's Exponent");
+  userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
+
+  userEvent.click(getByTestId(container, 'calculate-buton'));
+
+  await waitFor(() => expect(queryByText(container, 'This color is not valid for this band')));
+
   expect(queryByText(container, 'This color is not valid for this band')).toBeInTheDocument();
+
+  userEvent.click(getByTestId(container, 'reset-buton'));
+
+  expect(queryByText(container, 'This color is not valid for this band')).not.toBeInTheDocument();
+  expect(queryByText(container, 'Values')).not.toBeInTheDocument();
+  expect(getByText(firstSelect, 'Select a color').selected).toBe(true);
+  expect(getByText(secondSelect, 'Select a color').selected).toBe(true);
+  expect(getByText(exponentSelect, 'Select a color').selected).toBe(true);
 });

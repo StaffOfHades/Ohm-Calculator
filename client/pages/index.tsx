@@ -52,7 +52,7 @@ interface ResistorBands {
   toleranceBand?: Colors;
 }
 
-interface ResistorValues {
+export interface ResistorValues {
   baseResistance: number;
   maxResistance: number;
   mixResistance: number;
@@ -140,11 +140,11 @@ function HorizontalField({ addon, label, value }: HorizontalFieldProps) {
       <div className="field-body">
         <div className={classNames('field', { 'has-addons': addon !== undefined })}>
           <div className={classNames('control', { 'is-expanded': addon !== undefined })}>
-            <input className="input" readonly value={value} />
+            <input className="input" readOnly value={value} />
           </div>
           {addon !== undefined ? (
-            <div class="control">
-              <a class="button is-static">{addon}</a>
+            <div className="control">
+              <a className="button is-static">{addon}</a>
             </div>
           ) : (
             <Fragment />
@@ -357,21 +357,25 @@ export default function Home({ request = defaultRequest }: HomeProps) {
                 className="content"
                 style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 400 + 'px' }}
               >
-                <HorizontalField addon="%" label="Tolerance" value={resistorValues.tolerance} />
+                <HorizontalField
+                  addon="%"
+                  label="Tolerance"
+                  value={resistorValues.tolerance.toString()}
+                />
                 <HorizontalField
                   addon="ohms"
                   label="Resistance (Base)"
-                  value={resistorValues.baseResistance}
+                  value={resistorValues.baseResistance.toString()}
                 />
                 <HorizontalField
                   addon="ohms"
                   label="Resistance (Max)"
-                  value={resistorValues.maxResistance}
+                  value={resistorValues.maxResistance.toString()}
                 />
                 <HorizontalField
                   addon="ohms"
                   label="Resistance (Min)"
-                  value={resistorValues.mixResistance}
+                  value={resistorValues.mixResistance.toString()}
                 />
               </div>
             </div>
