@@ -243,7 +243,7 @@ export default function Home({ request = defaultRequest }: HomeProps) {
       <div className="container">
         <div
           className="card block"
-          style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 720 + 'px' }}
+          style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 1080 + 'px' }}
         >
           <header className="card-header">
             <p className="card-header-title">Ohm Calculator</p>
@@ -255,14 +255,22 @@ export default function Home({ request = defaultRequest }: HomeProps) {
           </header>
           <div className="card-content">
             <div className="content">
-              <div className="columns">
+              <div className="columns is-multiline">
                 {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
                   <div
-                    className={classNames('column', {
-                      'is-one-fourth': !useThirdBand,
-                      'is-one-fifth': useThirdBand,
-                    })}
+                    className={classNames(
+                      'column',
+                      {
+                        'is-one-fourth-desktop': !useThirdBand,
+                        'is-one-fifth-desktop': useThirdBand,
+                      },
+                      {
+                        'is-full-tablet': !useThirdBand,
+                        'is-full-tablet': useThirdBand,
+                      }
+                    )}
                     key={key}
+                    style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 400 + 'px' }}
                   >
                     <ColoredCirlce color={bands[key]?.value ?? ''} key={key} />
                     <Field
@@ -326,7 +334,7 @@ export default function Home({ request = defaultRequest }: HomeProps) {
         {resistorValues !== null ? (
           <div
             className="card block"
-            style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 720 + 'px' }}
+            style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 1080 + 'px' }}
           >
             <header className="card-header">
               <p className="card-header-title">Values</p>
