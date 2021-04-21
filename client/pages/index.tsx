@@ -38,7 +38,7 @@ interface ResistorValues {
   tolerance: number;
 }
 
-function FieldColumn({ className, label, name, setter, value }) {
+function FieldColumn({ className, invalid, label, name, setter, value }) {
   return (
     <div className={classNames('column', className)}>
       <div className="field">
@@ -47,9 +47,16 @@ function FieldColumn({ className, label, name, setter, value }) {
         </label>
         <div className="control is-expanded">
           <div
-            className={classNames('select', 'is-fullwidth', {
-              'is-empty': value === '',
-            })}
+            className={classNames(
+              'select',
+              'is-fullwidth',
+              {
+                'is-empty': value === '',
+              },
+              {
+                'is-danger': invalid,
+              }
+            )}
           >
             <select
               id={name}
@@ -68,6 +75,13 @@ function FieldColumn({ className, label, name, setter, value }) {
             </select>
           </div>
         </div>
+        <p
+          className={classNames('help', 'is-danger', {
+            'is-hidden': !invalid,
+          })}
+        >
+          This color is not valid for this band
+        </p>
       </div>
     </div>
   );
@@ -81,6 +95,7 @@ export default function Home() {
   const [toleranceBand, setToleranceBand] = useState<Colors | ''>('');
   const [useThirdBand, setUseThirdBand] = useState(false);
   const [resistorValues, setResistorValues] = useState<ResistorValues | null>(null);
+  const [invalidBands, setInvalidBands] = useState<Array<string>>([]);
 
   const bands = {
     firstBand: {
@@ -141,12 +156,15 @@ export default function Home() {
       const data = await response.json();
       if (response.status === 400) {
         const { invalidFields }: { invalidFields: Array<string> } = data;
+        setInvalidBands(invalidFields);
+        setResistorValues(null);
         alert(
           `Invalid Fields: ${invalidFields.map((field) => bands[field]?.label ?? field).join('; ')}`
         );
         return;
       }
       if (response.status === 200) {
+        setInvalidBands([]);
         setResistorValues(data);
         alert(JSON.stringify(data));
         return;
@@ -199,6 +217,7 @@ export default function Home() {
                       'is-one-fourth': !useThirdBand,
                       'is-one-fifth': useThirdBand,
                     })}
+                    invalid={invalidBands.includes(key)}
                     key={key}
                     label={bands[key].label}
                     name={key}
