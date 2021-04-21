@@ -1,9 +1,10 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Head from 'next/head';
 import classNames from 'classnames';
-import { faCalculator, faCircle as fasCircle, faUndo } from '@fortawesome/free-solid-svg-icons';
-import { faCircle as farCircle } from '@fortawesome/free-regular-svg-icons';
+import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
+
+import ColoredCirlce from '../components/ColoredCircle.tsx';
 
 enum Colors {
   Pink = 'pink',
@@ -91,28 +92,14 @@ export default function Home() {
             <div className="content">
               <div className="columns">
                 {Object.keys(bands).map((key) => (
-                  <div
-                    className={classNames('column', 'has-text-centered', {
+                  <ColoredCirlce
+                    className={classNames({
                       'is-one-fourth': !useThirdBand,
                       'is-one-fifth': useThirdBand,
                     })}
+                    color={bands[key].value}
                     key={key}
-                  >
-                    <span
-                      className="icon"
-                      style={{
-                        border: `${2}px solid ${bands[key].value === '' ? 'gainsboro' : 'black'}`,
-                        borderRadius: 290486 + 'px',
-                        color: bands[key].value,
-                      }}
-                    >
-                      {bands[key].value === '' ? (
-                        <Fragment />
-                      ) : (
-                        <FontAwesomeIcon icon={fasCircle} />
-                      )}
-                    </span>
-                  </div>
+                  />
                 ))}
               </div>
               <div className="columns">
