@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Head from 'next/head';
+import { Props, useState } from 'react';
 import classNames from 'classnames';
 import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,6 +28,34 @@ interface ResistorBands {
   secondBand: Colors;
   thirdBand?: Colors;
   toleranceBand?: Colors;
+}
+
+function FieldColumn({ className, label, setter, value }) {
+  return (
+    <div className={classNames('column', className)}>
+      <div className="field">
+        <label className="label">{label}</label>
+        <div className="control is-expanded">
+          <div
+            className={classNames('select', 'is-fullwidth', {
+              'is-empty': value === '',
+            })}
+          >
+            <select value={value} onChange={(event) => setter(event.target.value)}>
+              <option disabled value="" hidden>
+                Select a color
+              </option>
+              {Object.keys(Colors).map((key) => (
+                <option key={Colors[key]} value={Colors[key]}>
+                  {Colors[key]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Home() {
@@ -104,37 +132,16 @@ export default function Home() {
               </div>
               <div className="columns">
                 {Object.keys(bands).map((key) => (
-                  <div
-                    className={classNames('column', {
+                  <FieldColumn
+                    className={classNames({
                       'is-one-fourth': !useThirdBand,
                       'is-one-fifth': useThirdBand,
                     })}
                     key={key}
-                  >
-                    <div className="field">
-                      <div className="control is-expanded">
-                        <div
-                          className={classNames('select', 'is-fullwidth', {
-                            'is-empty': bands[key].value === '',
-                          })}
-                        >
-                          <select
-                            value={bands[key].value}
-                            onChange={(event) => bands[key].setter(event.target.value)}
-                          >
-                            <option disabled value="" hidden>
-                              Select a color
-                            </option>
-                            {Object.keys(Colors).map((key) => (
-                              <option key={Colors[key]} value={Colors[key]}>
-                                {Colors[key]}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    label={key}
+                    setter={bands[key].setter}
+                    value={bands[key].value}
+                  />
                 ))}
               </div>
             </div>
