@@ -1,11 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Head from 'next/head';
-import { Props, useState } from 'react';
-import { Response } from 'http';
+import { useState } from 'react';
 import classNames from 'classnames';
 import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
 
-import ColoredCirlce from '../components/ColoredCircle.tsx';
+import ColoredCirlce from '../components/ColoredCircle';
 
 enum Colors {
   Pink = 'pink',
@@ -23,6 +22,15 @@ enum Colors {
   White = 'white',
 }
 
+interface FieldColumnProps {
+  className: string;
+  invalid: boolean;
+  label: string;
+  name: string;
+  setter: Function;
+  value: Colors | '';
+}
+
 interface ResistorBands {
   exponentBand: Colors;
   firstBand: Colors;
@@ -38,7 +46,7 @@ interface ResistorValues {
   tolerance: number;
 }
 
-function FieldColumn({ className, invalid, label, name, setter, value }) {
+function FieldColumn({ className, invalid, label, name, setter, value }: FieldColumnProps) {
   return (
     <div className={classNames('column', className)}>
       <div className="field">
@@ -67,7 +75,7 @@ function FieldColumn({ className, invalid, label, name, setter, value }) {
               <option disabled value="" hidden>
                 Select a color
               </option>
-              {Object.keys(Colors).map((key) => (
+              {(Object.keys(Colors) as Array<keyof typeof Colors>).map((key) => (
                 <option key={Colors[key]} value={Colors[key]}>
                   {Colors[key]}
                 </option>
@@ -136,7 +144,7 @@ export default function Home() {
     exponentBand !== '';
 
   function resetBands() {
-    Object.keys(bands).forEach((key) => bands[key].setter(''));
+    (Object.keys(bands) as Array<keyof typeof bands>).forEach((key) => bands[key]?.setter(''));
   }
 
   async function calculateValues() {
@@ -147,8 +155,9 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(
-          Object.keys(bands).reduce((values, key) => {
-            if (bands[key].value !== '') values[key] = bands[key].value;
+          (Object.keys(bands) as Array<keyof typeof bands>).reduce((values, key) => {
+            const value = bands[key]?.value;
+            if (value !== undefined && value !== '') values[key] = value;
             return values;
           }, {} as Record<string, string>)
         ),
@@ -158,15 +167,11 @@ export default function Home() {
         const { invalidFields }: { invalidFields: Array<string> } = data;
         setInvalidBands(invalidFields);
         setResistorValues(null);
-        alert(
-          `Invalid Fields: ${invalidFields.map((field) => bands[field]?.label ?? field).join('; ')}`
-        );
         return;
       }
       if (response.status === 200) {
         setInvalidBands([]);
         setResistorValues(data);
-        alert(JSON.stringify(data));
         return;
       }
 
@@ -199,19 +204,19 @@ export default function Home() {
           <div className="card-content">
             <div className="content">
               <div className="columns">
-                {Object.keys(bands).map((key) => (
+                {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
                   <ColoredCirlce
                     className={classNames({
                       'is-one-fourth': !useThirdBand,
                       'is-one-fifth': useThirdBand,
                     })}
-                    color={bands[key].value}
+                    color={bands[key]?.value ?? ''}
                     key={key}
                   />
                 ))}
               </div>
               <div className="columns">
-                {Object.keys(bands).map((key) => (
+                {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
                   <FieldColumn
                     className={classNames({
                       'is-one-fourth': !useThirdBand,
@@ -219,10 +224,10 @@ export default function Home() {
                     })}
                     invalid={invalidBands.includes(key)}
                     key={key}
-                    label={bands[key].label}
+                    label={bands[key]!.label}
                     name={key}
-                    setter={bands[key].setter}
-                    value={bands[key].value}
+                    setter={bands[key]!.setter}
+                    value={bands[key]!.value}
                   />
                 ))}
               </div>
@@ -258,9 +263,9 @@ export default function Home() {
               </a>
             ) : (
               <span
+                aria-disabled
                 className="card-footer-item"
                 data-testid="calculate-buton"
-                disabled
                 role="button"
                 style={{ cursor: 'not-allowed' }}
               >

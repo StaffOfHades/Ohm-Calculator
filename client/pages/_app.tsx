@@ -1,10 +1,8 @@
-import type { AppProps, AppComponent } from 'next/app';
+import type { AppProps } from 'next/app';
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import '../styles/globals.sass';
 
-const MainApp: AppComponent = ({ Component, pageProps }: AppProps) => {
+export default function MainApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
-};
-
-export default MainApp;
+}

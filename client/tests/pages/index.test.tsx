@@ -35,7 +35,7 @@ test('1st digit select can have a value selected', async () => {
 test('form prevents sending data until required fields are selected', async () => {
   const { container } = render(<Home />);
 
-  expect(getByTestId(container, 'calculate-buton').attributes).toHaveProperty('disabled');
+  expect(getByTestId(container, 'calculate-buton').attributes).toHaveProperty('aria-disabled');
 
   const firstSelect = getByLabelText(container, '1st Digit');
   userEvent.selectOptions(firstSelect, [getByText(firstSelect, 'black')]);
@@ -46,5 +46,22 @@ test('form prevents sending data until required fields are selected', async () =
   const exponentSelect = getByLabelText(container, "10's Exponent");
   userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
 
-  expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('disabled');
+  expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('aria-disabled');
+});
+
+test('form prevents sending data until required fields are selected', async () => {
+  const { container } = render(<Home />);
+
+  expect(getByTestId(container, 'calculate-buton').attributes).toHaveProperty('aria-disabled');
+
+  const firstSelect = getByLabelText(container, '1st Digit');
+  userEvent.selectOptions(firstSelect, [getByText(firstSelect, 'black')]);
+
+  const secondSelect = getByLabelText(container, '2nd Digit');
+  userEvent.selectOptions(secondSelect, [getByText(secondSelect, 'black')]);
+
+  const exponentSelect = getByLabelText(container, "10's Exponent");
+  userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
+
+  expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('aria-disabled');
 });

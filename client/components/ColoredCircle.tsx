@@ -1,9 +1,14 @@
-import { Fragment, Props } from 'react';
+import { Fragment } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
-export default function ColoredCirlce({ className, color }: Props) {
+interface ColoredCircleProps {
+  className: string;
+  color: string;
+}
+
+export default function ColoredCirlce({ className, color }: ColoredCircleProps) {
   return (
     <div className={classNames('column', 'has-text-centered', className)}>
       <span
