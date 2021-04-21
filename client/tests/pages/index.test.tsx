@@ -1,8 +1,8 @@
-import { getByLabelText, getByTestId, getByText } from '@testing-library/dom';
-import { fireEvent, render } from '@testing-library/react';
+import { getByLabelText, getByTestId, getByText, queryByText } from '@testing-library/dom';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Home from '../../pages/index.tsx';
+import Home, { RequestOptions } from '../../pages/index.tsx';
 
 test('loads initial page', async () => {
   const { container } = render(<Home />);
@@ -64,4 +64,26 @@ test('form prevents sending data until required fields are selected', async () =
   userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
 
   expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('aria-disabled');
+});
+
+test('help message is shown if an invalid field colors is returned', async () => {
+  function request(options: RequestOptions<Record<string, string>>): Promise<Array<string>> {
+    return ['exponentBand'];
+  }
+
+  const { container } = render(<Home request={request} />);
+
+  const firstSelect = getByLabelText(container, '1st Digit');
+  userEvent.selectOptions(firstSelect, [getByText(firstSelect, 'black')]);
+
+  const secondSelect = getByLabelText(container, '2nd Digit');
+  userEvent.selectOptions(secondSelect, [getByText(secondSelect, 'black')]);
+
+  const exponentSelect = getByLabelText(container, "10's Exponent");
+  userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
+
+  userEvent.click(getByTestId(container, 'calculate-buton'));
+
+  await waitFor(() => expect(queryByText(container, 'This color is not valid for this band')));
+  expect(queryByText(container, 'This color is not valid for this band')).toBeInTheDocument();
 });

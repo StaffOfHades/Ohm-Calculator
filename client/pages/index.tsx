@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Fragment, useState } from 'react';
 import Head from 'next/head';
-import { useState } from 'react';
 import classNames from 'classnames';
 import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
 
@@ -22,7 +22,7 @@ enum Colors {
   White = 'white',
 }
 
-interface RequestOptions<D> {
+export interface RequestOptions<D> {
   data: D;
   url: string;
   method: 'GET' | 'POST';
@@ -114,13 +114,11 @@ function FieldColumn({ className, invalid, label, name, setter, value }: FieldCo
             </select>
           </div>
         </div>
-        <p
-          className={classNames('help', 'is-danger', {
-            'is-hidden': !invalid,
-          })}
-        >
-          This color is not valid for this band
-        </p>
+        {invalid ? (
+          <p className="help is-danger">This color is not valid for this band</p>
+        ) : (
+          <Fragment />
+        )}
       </div>
     </div>
   );
