@@ -1,3 +1,10 @@
 @charset "utf-8"
 
 @import "../node_modules/bulma/bulma.sass"
+
+.select select option:disabled
+  cursor: not-allowed
+  opacity: .5
+
+.select.is-empty select
+    color: rgba($grey, 0.7)
