@@ -66,30 +66,35 @@ export default function Home() {
   const [toleranceBand, setToleranceBand] = useState<Colors | ''>('');
   const [useThirdBand, setUseThirdBand] = useState(false);
   const bands = {
-    exponentBand: {
-      value: exponentBand,
-      setter: setExponentBand,
-    },
     firstBand: {
+      label: '1st Digit',
       value: firstBand,
       setter: setFirstBand,
     },
     secondBand: {
+      label: '2nd Digit',
       value: secondBand,
       setter: setSecondBand,
-    },
-    toleranceBand: {
-      value: toleranceBand,
-      setter: setToleranceBand,
     },
     ...(useThirdBand
       ? {
           thirdBand: {
+            label: '3rd Digit',
             value: thirdBand,
             setter: setThirdBand,
           },
         }
       : {}),
+    exponentBand: {
+      label: "10's Exponent",
+      value: exponentBand,
+      setter: setExponentBand,
+    },
+    toleranceBand: {
+      label: 'Tolerence',
+      value: toleranceBand,
+      setter: setToleranceBand,
+    },
   };
 
   function resetBands() {
@@ -138,7 +143,7 @@ export default function Home() {
                       'is-one-fifth': useThirdBand,
                     })}
                     key={key}
-                    label={key}
+                    label={bands[key].label}
                     setter={bands[key].setter}
                     value={bands[key].value}
                   />
