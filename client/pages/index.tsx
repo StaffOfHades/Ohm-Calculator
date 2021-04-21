@@ -32,7 +32,7 @@ export default function Home() {
                 <span className="icon">
                   <FontAwesomeIcon icon={faUndo} />
                 </span>
-                <span>Restablecer</span>
+                <span>Reset</span>
               </span>
             </a>
             <a className="card-footer-item">
@@ -40,7 +40,7 @@ export default function Home() {
                 <span className="icon">
                   <FontAwesomeIcon icon={faCalculator} />
                 </span>
-                <span>Calcular</span>
+                <span>Calculate</span>
               </span>
             </a>
           </footer>
