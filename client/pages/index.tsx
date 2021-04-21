@@ -257,18 +257,6 @@ export default function Home({ request = defaultRequest }: HomeProps) {
             <div className="content">
               <div className="columns">
                 {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
-                  <ColoredCirlce
-                    className={classNames('column', {
-                      'is-one-fourth': !useThirdBand,
-                      'is-one-fifth': useThirdBand,
-                    })}
-                    color={bands[key]?.value ?? ''}
-                    key={key}
-                  />
-                ))}
-              </div>
-              <div className="columns">
-                {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
                   <div
                     className={classNames('column', {
                       'is-one-fourth': !useThirdBand,
@@ -276,6 +264,7 @@ export default function Home({ request = defaultRequest }: HomeProps) {
                     })}
                     key={key}
                   >
+                    <ColoredCirlce color={bands[key]?.value ?? ''} key={key} />
                     <Field
                       invalid={invalidBands.includes(key)}
                       label={bands[key]!.label}
