@@ -29,8 +29,7 @@ export interface RequestOptions<D> {
   method: 'GET' | 'POST';
 }
 
-interface FieldColumnProps {
-  className: string;
+interface FieldProps {
   invalid: boolean;
   label: string;
   name: string;
@@ -84,49 +83,47 @@ async function defaultRequest(
   return null;
 }
 
-function FieldColumn({ className, invalid, label, name, setter, value }: FieldColumnProps) {
+function Field({ invalid, label, name, setter, value }: FieldProps) {
   return (
-    <div className={classNames('column', className)}>
-      <div className="field">
-        <label className="label" htmlFor={name}>
-          {label}
-        </label>
-        <div className="control is-expanded">
-          <div
-            className={classNames(
-              'select',
-              'is-fullwidth',
-              {
-                'is-empty': value === '',
-              },
-              {
-                'is-danger': invalid,
-              }
-            )}
+    <div className="field">
+      <label className="label" htmlFor={name}>
+        {label}
+      </label>
+      <div className="control is-expanded">
+        <div
+          className={classNames(
+            'select',
+            'is-fullwidth',
+            {
+              'is-empty': value === '',
+            },
+            {
+              'is-danger': invalid,
+            }
+          )}
+        >
+          <select
+            id={name}
+            name={name}
+            value={value}
+            onChange={(event) => setter(event.target.value)}
           >
-            <select
-              id={name}
-              name={name}
-              value={value}
-              onChange={(event) => setter(event.target.value)}
-            >
-              <option disabled value="" hidden>
-                Select a color
+            <option disabled value="" hidden>
+              Select a color
+            </option>
+            {(Object.keys(Colors) as Array<keyof typeof Colors>).map((key) => (
+              <option key={Colors[key]} value={Colors[key]}>
+                {Colors[key]}
               </option>
-              {(Object.keys(Colors) as Array<keyof typeof Colors>).map((key) => (
-                <option key={Colors[key]} value={Colors[key]}>
-                  {Colors[key]}
-                </option>
-              ))}
-            </select>
-          </div>
+            ))}
+          </select>
         </div>
-        {invalid ? (
-          <p className="help is-danger">This color is not valid for this band</p>
-        ) : (
-          <Fragment />
-        )}
       </div>
+      {invalid ? (
+        <p className="help is-danger">This color is not valid for this band</p>
+      ) : (
+        <Fragment />
+      )}
     </div>
   );
 }
@@ -261,7 +258,7 @@ export default function Home({ request = defaultRequest }: HomeProps) {
               <div className="columns">
                 {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
                   <ColoredCirlce
-                    className={classNames({
+                    className={classNames('column', {
                       'is-one-fourth': !useThirdBand,
                       'is-one-fifth': useThirdBand,
                     })}
@@ -272,18 +269,21 @@ export default function Home({ request = defaultRequest }: HomeProps) {
               </div>
               <div className="columns">
                 {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
-                  <FieldColumn
-                    className={classNames({
+                  <div
+                    className={classNames('column', {
                       'is-one-fourth': !useThirdBand,
                       'is-one-fifth': useThirdBand,
                     })}
-                    invalid={invalidBands.includes(key)}
                     key={key}
-                    label={bands[key]!.label}
-                    name={key}
-                    setter={bands[key]!.setter}
-                    value={bands[key]!.value}
-                  />
+                  >
+                    <Field
+                      invalid={invalidBands.includes(key)}
+                      label={bands[key]!.label}
+                      name={key}
+                      setter={bands[key]!.setter}
+                      value={bands[key]!.value}
+                    />
+                  </div>
                 ))}
               </div>
             </div>

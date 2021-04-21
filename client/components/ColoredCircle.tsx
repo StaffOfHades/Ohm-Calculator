@@ -10,7 +10,7 @@ interface ColoredCircleProps {
 
 export default function ColoredCirlce({ className, color }: ColoredCircleProps) {
   return (
-    <div className={classNames('column', 'has-text-centered', className)}>
+    <p className={classNames('has-text-centered', className)}>
       <span
         className="icon"
         style={{
@@ -21,6 +21,6 @@ export default function ColoredCirlce({ className, color }: ColoredCircleProps) 
       >
         {color === '' ? <Fragment /> : <FontAwesomeIcon icon={faCircle} />}
       </span>
-    </div>
+    </p>
   );
 }
