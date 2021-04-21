@@ -30,18 +30,25 @@ interface ResistorBands {
   toleranceBand?: Colors;
 }
 
-function FieldColumn({ className, label, setter, value }) {
+function FieldColumn({ className, label, name, setter, value }) {
   return (
     <div className={classNames('column', className)}>
       <div className="field">
-        <label className="label">{label}</label>
+        <label className="label" htmlFor={name}>
+          {label}
+        </label>
         <div className="control is-expanded">
           <div
             className={classNames('select', 'is-fullwidth', {
               'is-empty': value === '',
             })}
           >
-            <select value={value} onChange={(event) => setter(event.target.value)}>
+            <select
+              id={name}
+              name={name}
+              value={value}
+              onChange={(event) => setter(event.target.value)}
+            >
               <option disabled value="" hidden>
                 Select a color
               </option>
@@ -62,7 +69,7 @@ export default function Home() {
   const [exponentBand, setExponentBand] = useState<Colors | ''>('');
   const [firstBand, setFirstBand] = useState<Colors | ''>('');
   const [secondBand, setSecondBand] = useState<Colors | ''>('');
-  const [thirdBandBand, setThirdBand] = useState<Colors | ''>('');
+  const [thirdBand, setThirdBand] = useState<Colors | ''>('');
   const [toleranceBand, setToleranceBand] = useState<Colors | ''>('');
   const [useThirdBand, setUseThirdBand] = useState(false);
   const bands = {
@@ -96,6 +103,12 @@ export default function Home() {
       setter: setToleranceBand,
     },
   };
+
+  const isValid =
+    firstBand !== '' &&
+    secondBand !== '' &&
+    (setUseThirdBand ? thirdBand !== '' : true) &&
+    exponentBand !== '';
 
   function resetBands() {
     Object.keys(bands).forEach((key) => bands[key].setter(''));
@@ -144,6 +157,7 @@ export default function Home() {
                     })}
                     key={key}
                     label={bands[key].label}
+                    name={key}
                     setter={bands[key].setter}
                     value={bands[key].value}
                   />
@@ -160,14 +174,25 @@ export default function Home() {
                 <span>Reset</span>
               </span>
             </a>
-            <a className="card-footer-item">
-              <span className="icon-text">
-                <span className="icon">
-                  <FontAwesomeIcon icon={faCalculator} />
+            {isValid ? (
+              <a className="card-footer-item">
+                <span className="icon-text">
+                  <span className="icon">
+                    <FontAwesomeIcon icon={faCalculator} />
+                  </span>
+                  <span>Calculate</span>
                 </span>
-                <span>Calculate</span>
+              </a>
+            ) : (
+              <span className="card-footer-item" style={{ cursor: 'not-allowed' }}>
+                <span className="icon-text">
+                  <span className="icon">
+                    <FontAwesomeIcon icon={faCalculator} />
+                  </span>
+                  <span>Calculate</span>
+                </span>
               </span>
-            </a>
+            )}
           </footer>
         </div>
       </div>
