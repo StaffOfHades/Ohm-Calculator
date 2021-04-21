@@ -107,7 +107,7 @@ export default function Home() {
   const isValid =
     firstBand !== '' &&
     secondBand !== '' &&
-    (setUseThirdBand ? thirdBand !== '' : true) &&
+    (useThirdBand ? thirdBand !== '' : true) &&
     exponentBand !== '';
 
   function resetBands() {
