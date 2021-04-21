@@ -29,7 +29,7 @@ export interface RequestOptions<D> {
   method: 'GET' | 'POST';
 }
 
-interface FieldProps {
+interface ColorFieldProps {
   invalid: boolean;
   label: string;
   name: string;
@@ -64,6 +64,8 @@ interface HomeProps {
   ): Promise<ResistorValues | Array<string> | null>;
 }
 
+// Default request associated with this component that takes options
+// to return either the resistor values or the invalid fields.
 async function defaultRequest(
   options: RequestOptions<Record<string, string>>
 ): Promise<ResistorValues | Array<string> | null> {
@@ -75,15 +77,23 @@ async function defaultRequest(
     body: JSON.stringify(options.data),
   });
   const data = await response.json();
+
+  // When response is 400, the invalid fields where returned.
   if (response.status === 400) {
     const { invalidFields }: { invalidFields: Array<string> } = data;
     return invalidFields;
   }
+
+  // When the response is 200, the resistor values where returned
   if (response.status === 200) return data;
+
+  // In all other cases, an error ocurred communicating with server.
   return null;
 }
 
-function Field({ invalid, label, name, setter, value }: FieldProps) {
+// Creates a field component using bulma framework design using given props
+// that allows selecting one of the colors defined above.
+function ColorField({ invalid, label, name, setter, value }: ColorFieldProps) {
   return (
     <div className="field">
       <label className="label" htmlFor={name}>
@@ -128,6 +138,8 @@ function Field({ invalid, label, name, setter, value }: FieldProps) {
   );
 }
 
+// Creates a horizontal field component using bulma framework design using given props
+// with optional addon to define a static label at the end of the input
 function HorizontalField({ addon, label, value }: HorizontalFieldProps) {
   return (
     <div className="field is-horizontal">
@@ -152,7 +164,11 @@ function HorizontalField({ addon, label, value }: HorizontalFieldProps) {
   );
 }
 
+// Creates a home page component using bulma framework that is responsible for
+// creating calculator form to select a series of colors, validating inputs,
+// sending to server & showing results.
 export default function Home({ request = defaultRequest }: HomeProps) {
+  // Define state used by component
   const [exponentBand, setExponentBand] = useState<Colors | ''>('');
   const [firstBand, setFirstBand] = useState<Colors | ''>('');
   const [secondBand, setSecondBand] = useState<Colors | ''>('');
@@ -162,6 +178,8 @@ export default function Home({ request = defaultRequest }: HomeProps) {
   const [resistorValues, setResistorValues] = useState<ResistorValues | null>(null);
   const [invalidBands, setInvalidBands] = useState<Array<string>>([]);
 
+  // Create an object wrapper over some state used by app to allow accessing them
+  // as dictionary.
   const bands = {
     firstBand: {
       label: '1st Digit',
@@ -194,18 +212,21 @@ export default function Home({ request = defaultRequest }: HomeProps) {
     },
   };
 
+  // Computed value that determined if form contains valid values.
   const isValid =
     firstBand !== '' &&
     secondBand !== '' &&
     (useThirdBand ? thirdBand !== '' : true) &&
     exponentBand !== '';
 
+  // Reset app state to its intial values
   function resetBands() {
     (Object.keys(bands) as Array<keyof typeof bands>).forEach((key) => bands[key]?.setter(''));
     setInvalidBands([]);
     setResistorValues(null);
   }
 
+  // Helper function to send request to server & validate what data was recieved
   async function calculateValues() {
     function isResistorValues(values: ResistorValues | Array<string>): values is ResistorValues {
       return 'baseResistance' in values;
@@ -221,11 +242,14 @@ export default function Home({ request = defaultRequest }: HomeProps) {
           return values;
         }, {} as Record<string, string>),
       });
+      // If data is invalid or not the resistor values, show field erros & reset resistor values
       if (data === null || !isResistorValues(data)) {
         if (data !== null) setInvalidBands(data);
         setResistorValues(null);
         return;
       }
+
+      // Otherwise, set the passed resistor values to state.
       setInvalidBands([]);
       setResistorValues(data);
     } catch (error) {
@@ -282,7 +306,7 @@ export default function Home({ request = defaultRequest }: HomeProps) {
                     style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 400 + 'px' }}
                   >
                     <ColoredCirlce color={bands[key]?.value ?? ''} key={key} />
-                    <Field
+                    <ColorField
                       invalid={invalidBands.includes(key)}
                       label={bands[key]!.label}
                       name={key}

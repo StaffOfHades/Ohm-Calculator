@@ -83,6 +83,8 @@ test('form prevents sending data until required fields are selected', async () =
 });
 
 test('help message is shown if an invalid field colors is returned', async () => {
+  // Helper function to override default home function to avoid having to query server,
+  // as well as having a determinstic value.
   function request(options: RequestOptions<Record<string, string>>): Promise<Array<string>> {
     return ['exponentBand'];
   }
@@ -111,6 +113,8 @@ test('values return by server calculation are shown', async () => {
     maxResistance: 22,
     mixResistance: 18,
   };
+  // Helper function to override default home function to avoid having to query server,
+  // as well as having a determinstic value.
   function request(options: RequestOptions<Record<string, string>>): ResistorValues {
     return values;
   }
@@ -138,6 +142,8 @@ test('values return by server calculation are shown', async () => {
 });
 
 test('reset button resets form state to default values', async () => {
+  // Helper function to override default home function to avoid having to query server,
+  // as well as having a determinstic value.
   function request(options: RequestOptions<Record<string, string>>): Promise<Array<string>> {
     return ['exponentBand'];
   }

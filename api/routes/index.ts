@@ -19,8 +19,10 @@ interface ResistorBands {
   toleranceBand?: string;
 }
 
+// Add typing to imported json
 const ColorCodes: Record<string, ColorCode> = colorCodes;
 
+// Create arrays of valid colors for different bands/
 const ValidNumberColors = Object.keys(ColorCodes).filter((key) => ColorCodes[key].number !== null);
 const ValidToleranceColors: Array<string | null> = Object.keys(ColorCodes).filter(
   (key) => ColorCodes[key].tolerance !== null
