@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Head from 'next/head';
 import { Props, useState } from 'react';
+import { Response } from 'http';
 import classNames from 'classnames';
 import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
 
@@ -28,6 +29,13 @@ interface ResistorBands {
   secondBand: Colors;
   thirdBand?: Colors;
   toleranceBand?: Colors;
+}
+
+interface ResistorValues {
+  baseResistance: number;
+  maxResistance: number;
+  mixResistance: number;
+  tolerance: number;
 }
 
 function FieldColumn({ className, label, name, setter, value }) {
@@ -72,6 +80,8 @@ export default function Home() {
   const [thirdBand, setThirdBand] = useState<Colors | ''>('');
   const [toleranceBand, setToleranceBand] = useState<Colors | ''>('');
   const [useThirdBand, setUseThirdBand] = useState(false);
+  const [resistorValues, setResistorValues] = useState<ResistorValues | null>(null);
+
   const bands = {
     firstBand: {
       label: '1st Digit',
@@ -112,6 +122,40 @@ export default function Home() {
 
   function resetBands() {
     Object.keys(bands).forEach((key) => bands[key].setter(''));
+  }
+
+  async function calculateValues() {
+    try {
+      const response = await fetch('http://localhost:5000/calculate-values', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          Object.keys(bands).reduce((values, key) => {
+            if (bands[key].value !== '') values[key] = bands[key].value;
+            return values;
+          }, {} as Record<string, string>)
+        ),
+      });
+      const data = await response.json();
+      if (response.status === 400) {
+        const { invalidFields }: { invalidFields: Array<string> } = data;
+        alert(
+          `Invalid Fields: ${invalidFields.map((field) => bands[field]?.label ?? field).join('; ')}`
+        );
+        return;
+      }
+      if (response.status === 200) {
+        setResistorValues(data);
+        alert(JSON.stringify(data));
+        return;
+      }
+
+      alert(response.statusText);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -180,7 +224,12 @@ export default function Home() {
               </span>
             </a>
             {isValid ? (
-              <a className="card-footer-item" data-testid="calculate-buton" role="button">
+              <a
+                className="card-footer-item"
+                data-testid="calculate-buton"
+                role="button"
+                onClick={calculateValues}
+              >
                 <span className="icon-text">
                   <span className="icon">
                     <FontAwesomeIcon icon={faCalculator} />
