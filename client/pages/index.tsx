@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react';
 import Head from 'next/head';
 import classNames from 'classnames';
 import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 
 import ColoredCirlce from '../components/ColoredCircle';
 
@@ -35,6 +36,12 @@ interface FieldColumnProps {
   name: string;
   setter: Function;
   value: Colors | '';
+}
+
+interface HorizontalFieldProps {
+  addon?: string;
+  label: string;
+  value: string;
 }
 
 interface ResistorBands {
@@ -124,6 +131,30 @@ function FieldColumn({ className, invalid, label, name, setter, value }: FieldCo
   );
 }
 
+function HorizontalField({ addon, label, value }: HorizontalFieldProps) {
+  return (
+    <div className="field is-horizontal">
+      <div className="field-label is-normal">
+        <label className="label">{label}</label>
+      </div>
+      <div className="field-body">
+        <div className={classNames('field', { 'has-addons': addon !== undefined })}>
+          <div className={classNames('control', { 'is-expanded': addon !== undefined })}>
+            <input className="input" readonly value={value} />
+          </div>
+          {addon !== undefined ? (
+            <div class="control">
+              <a class="button is-static">{addon}</a>
+            </div>
+          ) : (
+            <Fragment />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home({ request = defaultRequest }: HomeProps) {
   const [exponentBand, setExponentBand] = useState<Colors | ''>('');
   const [firstBand, setFirstBand] = useState<Colors | ''>('');
@@ -174,6 +205,8 @@ export default function Home({ request = defaultRequest }: HomeProps) {
 
   function resetBands() {
     (Object.keys(bands) as Array<keyof typeof bands>).forEach((key) => bands[key]?.setter(''));
+    setInvalidBands([]);
+    setResistorValues(null);
   }
 
   async function calculateValues() {
@@ -212,7 +245,7 @@ export default function Home({ request = defaultRequest }: HomeProps) {
 
       <div className="container">
         <div
-          className="card"
+          className="card block"
           style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 720 + 'px' }}
         >
           <header className="card-header">
@@ -301,6 +334,51 @@ export default function Home({ request = defaultRequest }: HomeProps) {
             )}
           </footer>
         </div>
+        {resistorValues !== null ? (
+          <div
+            className="card block"
+            style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 720 + 'px' }}
+          >
+            <header className="card-header">
+              <p className="card-header-title">Values</p>
+              <button
+                className="card-header-icon"
+                onClick={() => {
+                  setResistorValues(null);
+                }}
+              >
+                <span className="icon">
+                  <FontAwesomeIcon icon={faTimesCircle} />
+                </span>
+              </button>
+            </header>
+            <div className="card-content">
+              <div
+                className="content"
+                style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 400 + 'px' }}
+              >
+                <HorizontalField addon="%" label="Tolerance" value={resistorValues.tolerance} />
+                <HorizontalField
+                  addon="ohms"
+                  label="Resistance (Base)"
+                  value={resistorValues.baseResistance}
+                />
+                <HorizontalField
+                  addon="ohms"
+                  label="Resistance (Max)"
+                  value={resistorValues.maxResistance}
+                />
+                <HorizontalField
+                  addon="ohms"
+                  label="Resistance (Min)"
+                  value={resistorValues.mixResistance}
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Fragment />
+        )}
       </div>
     </section>
   );
