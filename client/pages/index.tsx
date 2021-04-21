@@ -166,7 +166,12 @@ export default function Home() {
             </div>
           </div>
           <footer className="card-footer">
-            <a className="card-footer-item" onClick={resetBands}>
+            <a
+              className="card-footer-item"
+              data-testid="reset-buton"
+              role="button"
+              onClick={resetBands}
+            >
               <span className="icon-text">
                 <span className="icon">
                   <FontAwesomeIcon icon={faUndo} />
@@ -175,7 +180,7 @@ export default function Home() {
               </span>
             </a>
             {isValid ? (
-              <a className="card-footer-item">
+              <a className="card-footer-item" data-testid="calculate-buton" role="button">
                 <span className="icon-text">
                   <span className="icon">
                     <FontAwesomeIcon icon={faCalculator} />
@@ -184,7 +189,13 @@ export default function Home() {
                 </span>
               </a>
             ) : (
-              <span className="card-footer-item" style={{ cursor: 'not-allowed' }}>
+              <span
+                className="card-footer-item"
+                data-testid="calculate-buton"
+                disabled
+                role="button"
+                style={{ cursor: 'not-allowed' }}
+              >
                 <span className="icon-text">
                   <span className="icon">
                     <FontAwesomeIcon icon={faCalculator} />
