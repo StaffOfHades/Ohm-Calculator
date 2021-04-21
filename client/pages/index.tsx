@@ -1,58 +1,51 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
+import { faCalculator, faUndo } from '@fortawesome/free-solid-svg-icons';
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <section className="section has-background-light" style={{ minHeight: 100 + 'vh' }}>
       <Head>
-        <title>Create Next App</title>
+        <title>Ohm Calculator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a href="https://github.com/vercel/next.js/tree/master/examples" className={styles.card}>
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div className="container">
+        <div
+          className="card"
+          style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 720 + 'px' }}
         >
-          Powered by <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+          <header className="card-header">
+            <p className="card-header-title">Ohm Calculator</p>
+            <button className="card-header-icon">
+              <span className="icon">
+                <FontAwesomeIcon icon={faUndo} />
+              </span>
+            </button>
+          </header>
+          <div className="card-content">
+            <div className="content"></div>
+          </div>
+          <footer className="card-footer">
+            <a className="card-footer-item">
+              <span className="icon-text">
+                <span className="icon">
+                  <FontAwesomeIcon icon={faUndo} />
+                </span>
+                <span>Restablecer</span>
+              </span>
+            </a>
+            <a className="card-footer-item">
+              <span className="icon-text">
+                <span className="icon">
+                  <FontAwesomeIcon icon={faCalculator} />
+                </span>
+                <span>Calcular</span>
+              </span>
+            </a>
+          </footer>
+        </div>
+      </div>
+    </section>
   );
 }
