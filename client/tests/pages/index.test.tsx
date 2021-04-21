@@ -3,6 +3,7 @@ import {
   getByLabelText,
   getByTestId,
   getByText,
+  queryByLabelText,
   queryByText,
 } from '@testing-library/dom';
 import { fireEvent, render, waitFor } from '@testing-library/react';
@@ -38,21 +39,20 @@ test('1st digit select can have a value selected', async () => {
   expect(getByText(select, 'black').selected).toBe(true);
 });
 
-test('form prevents sending data until required fields are selected', async () => {
+test('3rd digit select can be enabled & have a value selected', async () => {
   const { container } = render(<Home />);
 
-  expect(getByTestId(container, 'calculate-buton').attributes).toHaveProperty('aria-disabled');
+  expect(queryByLabelText(container, '3rd Digit')).not.toBeInTheDocument();
 
-  const firstSelect = getByLabelText(container, '1st Digit');
-  userEvent.selectOptions(firstSelect, [getByText(firstSelect, 'black')]);
+  userEvent.click(getByText(container, 'Extended 5-Bands'));
 
-  const secondSelect = getByLabelText(container, '2nd Digit');
-  userEvent.selectOptions(secondSelect, [getByText(secondSelect, 'black')]);
+  expect(getByLabelText(container, '3rd Digit')).toBeInTheDocument();
 
-  const exponentSelect = getByLabelText(container, "10's Exponent");
-  userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
+  const select = getByLabelText(container, '3rd Digit');
 
-  expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('aria-disabled');
+  userEvent.selectOptions(select, [getByText(select, 'black')]);
+
+  expect(getByText(select, 'black').selected).toBe(true);
 });
 
 test('form prevents sending data until required fields are selected', async () => {
@@ -68,6 +68,16 @@ test('form prevents sending data until required fields are selected', async () =
 
   const exponentSelect = getByLabelText(container, "10's Exponent");
   userEvent.selectOptions(exponentSelect, [getByText(exponentSelect, 'black')]);
+
+  expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('aria-disabled');
+
+  userEvent.click(getByText(container, 'Extended 5-Bands'));
+
+  expect(getByTestId(container, 'calculate-buton').attributes).toHaveProperty('aria-disabled');
+
+  const thirdSelect = getByLabelText(container, '3rd Digit');
+
+  userEvent.selectOptions(thirdSelect, [getByText(thirdSelect, 'black')]);
 
   expect(getByTestId(container, 'calculate-buton').attributes).not.toHaveProperty('aria-disabled');
 });
@@ -152,6 +162,7 @@ test('reset button resets form state to default values', async () => {
   userEvent.click(getByTestId(container, 'reset-buton'));
 
   expect(queryByText(container, 'This color is not valid for this band')).not.toBeInTheDocument();
+  expect(getByTestId(container, 'calculate-buton').attributes).toHaveProperty('aria-disabled');
   expect(queryByText(container, 'Values')).not.toBeInTheDocument();
   expect(getByText(firstSelect, 'Select a color').selected).toBe(true);
   expect(getByText(secondSelect, 'Select a color').selected).toBe(true);
