@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface ColoredCircleProps {
-  className: string;
+  className?: string;
   color: string;
 }
 

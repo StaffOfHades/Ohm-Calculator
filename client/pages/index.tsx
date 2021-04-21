@@ -274,17 +274,10 @@ export default function Home({ request = defaultRequest }: HomeProps) {
               <div className="columns is-multiline">
                 {(Object.keys(bands) as Array<keyof typeof bands>).map((key) => (
                   <div
-                    className={classNames(
-                      'column',
-                      {
-                        'is-one-fourth-desktop': !useThirdBand,
-                        'is-one-fifth-desktop': useThirdBand,
-                      },
-                      {
-                        'is-full-tablet': !useThirdBand,
-                        'is-full-tablet': useThirdBand,
-                      }
-                    )}
+                    className={classNames('column', 'is-full-tablet', {
+                      'is-one-fourth-desktop': !useThirdBand,
+                      'is-one-fifth-desktop': useThirdBand,
+                    })}
                     key={key}
                     style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: 400 + 'px' }}
                   >
