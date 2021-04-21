@@ -22,6 +22,12 @@ enum Colors {
   White = 'white',
 }
 
+interface RequestOptions<D> {
+  data: D;
+  url: string;
+  method: 'GET' | 'POST';
+}
+
 interface FieldColumnProps {
   className: string;
   invalid: boolean;
@@ -44,6 +50,31 @@ interface ResistorValues {
   maxResistance: number;
   mixResistance: number;
   tolerance: number;
+}
+
+interface HomeProps {
+  request?(
+    options: RequestOptions<Record<string, string>>
+  ): Promise<ResistorValues | Array<string> | null>;
+}
+
+async function defaultRequest(
+  options: RequestOptions<Record<string, string>>
+): Promise<ResistorValues | Array<string> | null> {
+  const response = await fetch(options.url, {
+    method: options.method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(options.data),
+  });
+  const data = await response.json();
+  if (response.status === 400) {
+    const { invalidFields }: { invalidFields: Array<string> } = data;
+    return invalidFields;
+  }
+  if (response.status === 200) return data;
+  return null;
 }
 
 function FieldColumn({ className, invalid, label, name, setter, value }: FieldColumnProps) {
@@ -95,7 +126,7 @@ function FieldColumn({ className, invalid, label, name, setter, value }: FieldCo
   );
 }
 
-export default function Home() {
+export default function Home({ request = defaultRequest }: HomeProps) {
   const [exponentBand, setExponentBand] = useState<Colors | ''>('');
   const [firstBand, setFirstBand] = useState<Colors | ''>('');
   const [secondBand, setSecondBand] = useState<Colors | ''>('');
@@ -148,34 +179,27 @@ export default function Home() {
   }
 
   async function calculateValues() {
+    function isResistorValues(values: ResistorValues | Array<string>): values is ResistorValues {
+      return 'baseResistance' in values;
+    }
+
     try {
-      const response = await fetch('http://localhost:5000/calculate-values', {
+      const data = await request({
+        url: 'http://localhost:5000/calculate-values',
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(
-          (Object.keys(bands) as Array<keyof typeof bands>).reduce((values, key) => {
-            const value = bands[key]?.value;
-            if (value !== undefined && value !== '') values[key] = value;
-            return values;
-          }, {} as Record<string, string>)
-        ),
+        data: (Object.keys(bands) as Array<keyof typeof bands>).reduce((values, key) => {
+          const value = bands[key]?.value;
+          if (value !== undefined && value !== '') values[key] = value;
+          return values;
+        }, {} as Record<string, string>),
       });
-      const data = await response.json();
-      if (response.status === 400) {
-        const { invalidFields }: { invalidFields: Array<string> } = data;
-        setInvalidBands(invalidFields);
+      if (data === null || !isResistorValues(data)) {
+        if (data !== null) setInvalidBands(data);
         setResistorValues(null);
         return;
       }
-      if (response.status === 200) {
-        setInvalidBands([]);
-        setResistorValues(data);
-        return;
-      }
-
-      alert(response.statusText);
+      setInvalidBands([]);
+      setResistorValues(data);
     } catch (error) {
       console.error(error);
     }
