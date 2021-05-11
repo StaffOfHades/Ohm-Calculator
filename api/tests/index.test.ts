@@ -9,6 +9,20 @@ describe('Test the root path', () => {
   });
 });
 
+describe('Test the hello path', () => {
+  test('It should respond to the GET method with a default name', async () => {
+    const response = await request(app).get('/hello');
+    expect(response.status).toBe(200);
+    expect(response.text).toBe('Hello, Anonymous');
+  });
+  test('It should respond to the GET method with a passed name', async () => {
+    const name = 'Mauricio';
+    const response = await request(app).get(`/hello?name=${name}`);
+    expect(response.status).toBe(200);
+    expect(response.text).toBe(`Hello, ${name}`);
+  });
+});
+
 describe('Test the calculate value path', () => {
   const route = '/calculate-value';
   test('It should respond to empty body sent to POST method', async () => {
