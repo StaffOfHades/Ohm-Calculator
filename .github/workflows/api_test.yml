@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Server Testing
+name: API Testing
 
 # Controls when the action will run.
 on:
@@ -45,5 +45,5 @@ jobs:
       # Gets project dependencies
       - run: npm ci
 
-      # Tests server
+      # Tests api
       - run: npm test

@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Client Testing
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the 'master' branch
+  push:
+    branches:
+      - master
+    paths:
+      - 'client/**'
+  pull_request:
+    branches:
+      - development
+      - master
+    paths:
+      - 'client/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: client
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains an initial setup to checkout the project & get node ready
+  testing:
+     # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Sets-up node-js environment
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      # Gets project dependencies
+      - run: npm ci
+
+      # Tests api
+      - run: npm test
