@@ -16,9 +16,13 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains an initial setup to checkout the project & get node ready
-  setup:
+  server:
      # The type of runner that the job will run on
     runs-on: self-hosted
+
+    defaults:
+      run:
+        working-directory: server
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -31,17 +35,6 @@ jobs:
         with:
           node-version: '14'
 
-  # This workflow tests the server
-  server:
-    defaults:
-      run:
-        working-directory: server
-
-    # The type of runner that the job will run on
-    runs-on: self-hosted
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
       # Gets project dependencies
       - run: npm ci
 
