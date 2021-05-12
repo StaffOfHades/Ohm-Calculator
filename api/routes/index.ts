@@ -33,12 +33,6 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(['respond with a resource']);
 });
 
-router.get('/hello', (req: Request, res: Response, next: NextFunction) => {
-  const name = req.query.name ?? 'Anonymous';
-
-  res.status(200).set('Content-Type', 'text/html; charset=utf-8').send(`Hello, ${name}`);
-});
-
 // POST band colors of a resistors to get the label associated to the bands
 router.post(
   '/calculate-value',
